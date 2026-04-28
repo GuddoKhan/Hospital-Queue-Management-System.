@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hospital Queue Management System</title>
+    <title>AI Smart Hospital Queue</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -70,8 +70,11 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            width: 100%;
+            font-weight: bold;
         }
         button.action-btn:hover { background-color: #1d4ed8; }
+        button.action-btn:disabled { background-color: #93c5fd; cursor: not-allowed; }
         
         /* Queue Display */
         .queue-box {
@@ -82,57 +85,73 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: all 0.3s ease;
         }
         .current-serving {
-            background-color: #dcfce7;
-            border-color: #22c55e;
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
             font-size: 1.2em;
             font-weight: bold;
         }
+        /* AI Badges */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .badge-Critical { background-color: #fee2e2; color: #dc2626; border: 1px solid #f87171; }
+        .badge-Urgent { background-color: #ffedd5; color: #ea580c; border: 1px solid #fb923c; }
+        .badge-Routine { background-color: #f3f4f6; color: #4b5563; border: 1px solid #9ca3af; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1 style="text-align: center;">🏥 Care Queue System</h1>
+    <h1 style="text-align: center;">🏥 AI Smart Triage System</h1>
     
     <div class="nav">
-        <button id="tab-reception" class="active" onclick="switchTab('reception')">Reception (Add Patient)</button>
-        <button id="tab-display" onclick="switchTab('display')">Queue Display</button>
+        <button id="tab-reception" class="active" onclick="switchTab('reception')">Reception</button>
+        <button id="tab-display" onclick="switchTab('display')">Live Queue</button>
         <button id="tab-doctor" onclick="switchTab('doctor')">Doctor Dashboard</button>
     </div>
 
     <div id="view-reception" class="view active">
         <h2>Register New Patient</h2>
         <input type="text" id="patientName" placeholder="Enter Patient Name..." required>
-        <button class="action-btn" onclick="addPatient()">Generate Token</button>
-        <p id="receptionMessage" style="color: green; font-weight: bold; mt-10"></p>
+        <input type="text" id="patientSymptoms" placeholder="Describe symptoms (e.g., severe chest pain, mild fever)..." required>
+        
+        <button id="addBtn" class="action-btn" onclick="addPatient()">Analyze Symptoms & Generate Token</button>
+        <p id="receptionMessage" style="text-align: center; font-weight: bold; margin-top: 15px;"></p>
     </div>
 
     <div id="view-display" class="view">
         <h2>Live Queue Status</h2>
-        <div id="servingNowContainer">
-            </div>
+        <div id="servingNowContainer"></div>
         <hr>
         <h3>Waiting List</h3>
-        <div id="waitingListContainer">
-             </div>
+        <div id="waitingListContainer"></div>
     </div>
 
     <div id="view-doctor" class="view">
         <h2>Doctor Control Panel</h2>
-        <button class="action-btn" style="background-color: #22c55e;" onclick="callNextPatient()">Call Next Patient</button>
-        <button class="action-btn" style="background-color: #ef4444;" onclick="finishCurrentPatient()">Finish Serving Current</button>
-        <button class="action-btn" style="background-color: gray; float: right;" onclick="resetQueue()">Reset All Data</button>
-        <div id="doctorCurrentPatient" style="margin-top: 20px; font-size: 1.2em;">
-            </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button class="action-btn" style="background-color: #22c55e;" onclick="callNextPatient()">Call Next Patient</button>
+            <button class="action-btn" style="background-color: #ef4444;" onclick="finishCurrentPatient()">Finish Current</button>
+        </div>
+        <button class="action-btn" style="background-color: #4b5563;" onclick="resetQueue()">Reset All Data</button>
+        
+        <div id="doctorCurrentPatient" style="margin-top: 20px; font-size: 1.1em; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+        </div>
     </div>
 </div>
 
 <script>
-    // --- DATABASE (Local Storage Simulation) ---
-    // Structure: Array of objects { id: number, name: string, status: 'waiting' | 'serving' | 'completed' }
-    
+    // --- 🚨 IMPORTANT: ADD YOUR API KEY HERE 🚨 ---
+    const OPENROUTER_API_KEY = "YOUR_API_KEY_HERE"; 
+
+    // --- DATABASE ---
     function getQueue() {
         const data = localStorage.getItem('hospitalQueue');
         return data ? JSON.parse(data) : [];
@@ -140,51 +159,120 @@
 
     function saveQueue(queue) {
         localStorage.setItem('hospitalQueue', JSON.stringify(queue));
-        renderUI(); // Re-render UI whenever data changes
+        renderUI();
     }
 
-    // --- LOGIC FUNCTIONS ---
-    
-    function addPatient() {
+    // --- AI TRIAGE LOGIC ---
+    async function getAIPriority(symptoms) {
+        try {
+            const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    model: "meta-llama/llama-3-8b-instruct:free", 
+                    messages: [{
+                        role: "system",
+                        content: "You are a hospital triage AI. Read the symptoms and reply with EXACTLY ONE WORD from this list: 'Critical', 'Urgent', or 'Routine'. No punctuation, no explanation."
+                    }, {
+                        role: "user",
+                        content: symptoms
+                    }]
+                })
+            });
+
+            const data = await response.json();
+            let priority = data.choices[0].message.content.trim().replace(/[^a-zA-Z]/g, "");
+            
+            if (!["Critical", "Urgent", "Routine"].includes(priority)) {
+                priority = "Routine"; // Fallback
+            }
+            return priority;
+
+        } catch (error) {
+            console.error("AI Triage Failed:", error);
+            return "Routine"; // Fallback if API fails
+        }
+    }
+
+    // --- CORE LOGIC ---
+    async function addPatient() {
         const nameInput = document.getElementById('patientName');
+        const symptomInput = document.getElementById('patientSymptoms');
+        const msgBox = document.getElementById('receptionMessage');
+        const btn = document.getElementById('addBtn');
+
         const name = nameInput.value.trim();
-        if (!name) {
-            alert("Please enter a patient name.");
+        const symptoms = symptomInput.value.trim();
+
+        if (!name || !symptoms) {
+            alert("Please enter both name and symptoms.");
             return;
         }
 
+        // UI Loading State
+        btn.disabled = true;
+        btn.innerText = "🧠 AI is analyzing symptoms...";
+        msgBox.style.color = "blue";
+        msgBox.innerText = "Connecting to OpenRouter...";
+
+        // 1. Get AI Priority
+        const aiPriority = await getAIPriority(symptoms);
+
         const queue = getQueue();
-        const nextId = queue.length > 0 ? queue[queue.length - 1].id + 1 : 1;
+        const nextId = queue.length > 0 ? Math.max(...queue.map(p => p.id)) + 1 : 1;
         
         queue.push({
             id: nextId,
             name: name,
-            status: 'waiting'
+            symptoms: symptoms,
+            status: 'waiting',
+            priority: aiPriority
+        });
+
+        // 2. Sort Queue (Serving first, then by Priority, then by arrival)
+        const pValues = { "Critical": 3, "Urgent": 2, "Routine": 1 };
+        queue.sort((a, b) => {
+            if (a.status === 'serving') return -1;
+            if (b.status === 'serving') return 1;
+            if (pValues[b.priority] !== pValues[a.priority]) {
+                 return pValues[b.priority] - pValues[a.priority];
+            }
+            return a.id - b.id; 
         });
 
         saveQueue(queue);
-        nameInput.value = ''; // Clear input
-        document.getElementById('receptionMessage').innerText = `Patient ${name} added! Token: #${nextId}`;
-        setTimeout(() => document.getElementById('receptionMessage').innerText = '', 3000);
+        
+        // Reset UI
+        nameInput.value = ''; 
+        symptomInput.value = ''; 
+        btn.disabled = false;
+        btn.innerText = "Analyze Symptoms & Generate Token";
+        
+        const color = aiPriority === 'Critical' ? '#dc2626' : (aiPriority === 'Urgent' ? '#ea580c' : '#16a34a');
+        msgBox.style.color = color;
+        msgBox.innerHTML = `✅ ${name} Registered! (Token #${nextId}) <br> AI Triage: ${aiPriority}`;
+        setTimeout(() => msgBox.innerText = '', 5000);
     }
 
     function callNextPatient() {
         const queue = getQueue();
-        
-        // Ensure no one is currently being served
         const currentlyServing = queue.find(p => p.status === 'serving');
+        
         if (currentlyServing) {
-            alert(`Please finish with Token #${currentlyServing.id} before calling the next patient.`);
+            alert(`Please finish with Token #${currentlyServing.id} first.`);
             return;
         }
 
-        // Find the next waiting patient (FIFO - First In, First Out)
+        // Because we sort on add, the next 'waiting' patient is already the highest priority
         const nextPatient = queue.find(p => p.status === 'waiting');
         if (nextPatient) {
             nextPatient.status = 'serving';
             saveQueue(queue);
         } else {
-            alert("No patients are waiting in the queue.");
+            alert("No patients in queue.");
         }
     }
 
@@ -195,37 +283,29 @@
         if (currentlyServing) {
             currentlyServing.status = 'completed';
             saveQueue(queue);
-        } else {
-            alert("No patient is currently being served.");
         }
     }
 
     function resetQueue() {
-        if(confirm("Are you sure you want to delete all queue data? This is for demo purposes.")) {
+        if(confirm("Delete all data?")) {
             localStorage.removeItem('hospitalQueue');
             renderUI();
         }
     }
 
-    // --- UI/DOM FUNCTIONS ---
-
+    // --- UI RENDERING ---
     function switchTab(tabName) {
-        // Hide all views
-        document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
-        // Deactivate all tabs
-        document.querySelectorAll('.nav button').forEach(btn => btn.classList.remove('active'));
-        
-        // Show selected view and activate tab
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
         document.getElementById(`view-${tabName}`).classList.add('active');
         document.getElementById(`tab-${tabName}`).classList.add('active');
-        
-        renderUI(); // Refresh data when switching tabs
+        renderUI();
     }
 
     function renderUI() {
         const queue = getQueue();
         
-        // 1. Render Display View
+        // 1. Display View
         const servingNowContainer = document.getElementById('servingNowContainer');
         const waitingListContainer = document.getElementById('waitingListContainer');
         
@@ -233,30 +313,42 @@
         const waitingPatients = queue.filter(p => p.status === 'waiting');
 
         if (currentlyServing) {
-            servingNowContainer.innerHTML = `<div class="queue-box current-serving"><span>Now Serving: ${currentlyServing.name}</span> <span>Token #${currentlyServing.id}</span></div>`;
+            servingNowContainer.innerHTML = `
+                <div class="queue-box current-serving">
+                    <span>Now Serving: ${currentlyServing.name} <span class="badge badge-${currentlyServing.priority}">${currentlyServing.priority}</span></span> 
+                    <span>Token #${currentlyServing.id}</span>
+                </div>`;
         } else {
-            servingNowContainer.innerHTML = `<p>No patient is currently being served.</p>`;
+            servingNowContainer.innerHTML = `<p style="color: gray;">No patient currently being served.</p>`;
         }
 
         waitingListContainer.innerHTML = '';
         if (waitingPatients.length > 0) {
             waitingPatients.forEach(p => {
-                waitingListContainer.innerHTML += `<div class="queue-box"><span>${p.name}</span> <span>Token #${p.id}</span></div>`;
+                waitingListContainer.innerHTML += `
+                <div class="queue-box">
+                    <span><strong>${p.name}</strong> <span class="badge badge-${p.priority}">${p.priority}</span></span> 
+                    <span>Token #${p.id}</span>
+                </div>`;
             });
         } else {
-            waitingListContainer.innerHTML = '<p>No patients in the waiting queue.</p>';
+            waitingListContainer.innerHTML = '<p style="color: gray;">No patients waiting.</p>';
         }
 
-        // 2. Render Doctor View
+        // 2. Doctor View
         const doctorStatus = document.getElementById('doctorCurrentPatient');
         if (currentlyServing) {
-            doctorStatus.innerHTML = `<strong>Current Patient:</strong> ${currentlyServing.name} (Token #${currentlyServing.id})`;
+            doctorStatus.innerHTML = `
+                <strong>Patient:</strong> ${currentlyServing.name} (Token #${currentlyServing.id})<br><br>
+                <strong>AI Priority:</strong> <span class="badge badge-${currentlyServing.priority}">${currentlyServing.priority}</span><br><br>
+                <strong>Symptoms Logged:</strong> <em>"${currentlyServing.symptoms}"</em>
+            `;
         } else {
             doctorStatus.innerHTML = `<strong>Status:</strong> Available / Idle`;
         }
     }
 
-    // Initialize UI on page load
+    // Init
     renderUI();
 </script>
 
