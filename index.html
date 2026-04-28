@@ -45,11 +45,7 @@
             transition: all 0.5s ease;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
         .container {
             width: 100%;
@@ -64,163 +60,47 @@
             position: relative;
         }
 
-        h1 {
-            text-align: center;
-            text-shadow: 0 0 10px var(--primary-glow);
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-        }
-        
-        .subtitle {
-            text-align: center;
-            color: var(--primary);
-            font-size: 0.9em;
-            margin-top: 0;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
+        h1 { text-align: center; text-shadow: 0 0 10px var(--primary-glow); letter-spacing: 1px; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: var(--primary); font-size: 0.9em; margin-top: 0; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
 
-        .settings-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: transparent;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            text-shadow: 0 0 10px var(--primary-glow);
-        }
+        .settings-btn { position: absolute; top: 20px; right: 20px; background: transparent; border: none; font-size: 24px; cursor: pointer; transition: transform 0.3s ease; text-shadow: 0 0 10px var(--primary-glow); }
         .settings-btn:hover { transform: rotate(90deg); }
 
-        .nav {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 25px;
-            border-bottom: 1px solid var(--glass-border);
-            padding-bottom: 10px;
-        }
-        .nav button {
-            background: none;
-            border: none;
-            font-size: 16px;
-            font-weight: bold;
-            color: var(--text-muted);
-            cursor: pointer;
-            padding: 10px 20px;
-            transition: all 0.3s ease;
-            border-radius: 8px;
-        }
+        .nav { display: flex; justify-content: space-around; margin-bottom: 25px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
+        .nav button { background: none; border: none; font-size: 16px; font-weight: bold; color: var(--text-muted); cursor: pointer; padding: 10px 20px; transition: all 0.3s ease; border-radius: 8px; }
         .nav button:hover { background: rgba(255, 255, 255, 0.05); }
-        .nav button.active {
-            color: var(--primary);
-            text-shadow: 0 0 8px var(--primary-glow);
-            border-bottom: 3px solid var(--primary);
-            background: linear-gradient(to top, var(--primary-glow), transparent);
-        }
+        .nav button.active { color: var(--primary); text-shadow: 0 0 8px var(--primary-glow); border-bottom: 3px solid var(--primary); background: linear-gradient(to top, var(--primary-glow), transparent); }
 
         .view { display: none; animation: fadeIn 0.4s ease-in-out; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* AI Integration Specific Section */
-        .ai-module {
-            background: rgba(0, 0, 0, 0.15);
-            border: 1px solid var(--primary);
-            border-radius: 12px;
-            padding: 25px 20px 20px 20px;
-            margin-bottom: 20px;
-            position: relative;
-            box-shadow: 0 0 15px var(--primary-glow) inset;
-        }
-        .ai-module::before {
-            content: '🤖 AI & Voice Integration Module';
-            position: absolute;
-            top: -12px;
-            left: 20px;
-            background: var(--bg-gradient-1);
-            padding: 2px 10px;
-            font-size: 0.85em;
-            font-weight: bold;
-            color: var(--primary);
-            border-radius: 5px;
-            border: 1px solid var(--primary);
-        }
+        .ai-module { background: rgba(0, 0, 0, 0.15); border: 1px solid var(--primary); border-radius: 12px; padding: 25px 20px 20px 20px; margin-bottom: 20px; position: relative; box-shadow: 0 0 15px var(--primary-glow) inset; }
+        .ai-module::before { content: '🤖 AI & Voice Integration Module'; position: absolute; top: -12px; left: 20px; background: var(--bg-gradient-1); padding: 2px 10px; font-size: 0.85em; font-weight: bold; color: var(--primary); border-radius: 5px; border: 1px solid var(--primary); }
 
-        input {
-            width: calc(100% - 24px);
-            padding: 12px;
-            margin-bottom: 15px;
-            background: var(--input-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 8px;
-            color: var(--text-main);
-            outline: none;
-            transition: all 0.3s ease;
-        }
+        input { width: calc(100% - 24px); padding: 12px; margin-bottom: 15px; background: var(--input-bg); border: 1px solid var(--glass-border); border-radius: 8px; color: var(--text-main); outline: none; transition: all 0.3s ease; }
         input:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary-glow); }
 
-        button.action-btn {
-            background-color: transparent;
-            color: var(--text-main);
-            border: 1px solid var(--primary);
-            box-shadow: 0 0 10px var(--primary-glow) inset, 0 0 10px var(--primary-glow);
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        button.action-btn { background-color: transparent; color: var(--text-main); border: 1px solid var(--primary); box-shadow: 0 0 10px var(--primary-glow) inset, 0 0 10px var(--primary-glow); padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 16px; width: 100%; font-weight: bold; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; }
         button.action-btn:hover { background-color: var(--primary); color: #fff; box-shadow: 0 0 20px var(--primary); }
         button.action-btn:disabled { border-color: var(--text-muted); box-shadow: none; color: var(--text-muted); cursor: not-allowed; }
 
-        .queue-box {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            backdrop-filter: blur(5px);
-            transition: transform 0.2s ease;
-        }
+        .queue-box { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 15px; margin-bottom: 10px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(5px); transition: transform 0.2s ease; }
         .queue-box:hover { transform: translateX(5px); border-color: var(--primary); }
-        .current-serving {
-            background: linear-gradient(90deg, rgba(34, 197, 94, 0.1), transparent);
-            border-left: 4px solid #22c55e;
-            box-shadow: 0 0 15px rgba(34, 197, 94, 0.2);
-        }
+        .current-serving { background: linear-gradient(90deg, rgba(34, 197, 94, 0.1), transparent); border-left: 4px solid #22c55e; box-shadow: 0 0 15px rgba(34, 197, 94, 0.2); }
 
-        .badge {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.85em;
-            font-weight: bold;
-            margin-left: 10px;
-            text-transform: uppercase;
-        }
+        .badge { padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: bold; margin-left: 10px; text-transform: uppercase; }
         .badge-Critical { background: rgba(220, 38, 38, 0.2); color: #ef4444; border: 1px solid #ef4444; text-shadow: 0 0 5px #ef4444; }
         .badge-Urgent { background: rgba(234, 88, 12, 0.2); color: #f97316; border: 1px solid #f97316; text-shadow: 0 0 5px #f97316; }
         .badge-Routine { background: rgba(156, 163, 175, 0.2); color: #9ca3af; border: 1px solid #9ca3af; }
         .badge-ETA { background: rgba(6, 182, 212, 0.1); color: var(--primary); border: 1px solid var(--primary); margin-left: 5px;}
 
-        /* Sensor Box */
-        .sensor-data {
-            font-family: 'Courier New', Courier, monospace;
-            background: rgba(0,0,0,0.5);
-            padding: 10px;
-            border-radius: 5px;
-            color: #22c55e;
-            margin-top: 10px;
-            display: inline-block;
-            border: 1px solid #22c55e;
+        /* Print Styles */
+        @media print {
+            body { background: white; color: black; padding: 0; }
+            .container { box-shadow: none; border: none; max-width: 100%; }
+            .nav, .settings-btn, button { display: none !important; }
+            #aiReportOutput { display: block !important; border: none !important; }
         }
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); z-index: 100; justify-content: center; align-items: center; }
@@ -254,7 +134,6 @@
             </div>
             <button id="addBtn" class="action-btn" onclick="addPatient()">Initiate AI Scan & Generate Token</button>
         </div>
-
         <p id="receptionMessage" style="text-align: center; font-weight: bold; margin-top: 15px; text-shadow: 0 0 8px var(--primary);"></p>
     </div>
 
@@ -316,33 +195,13 @@
         localStorage.setItem('hospitalTheme', mode);
     }
 
-    // --- HARDWARE SIMULATION LOGIC ---
-    let sensorInterval;
-    function simulatePulseSensor() {
-        clearInterval(sensorInterval);
-        const vitalsDisplay = document.getElementById('pulseRate');
-        if(!vitalsDisplay) return;
-        
-        sensorInterval = setInterval(() => {
-            // Simulating Arduino UNO I2C output variation
-            const bpm = Math.floor(Math.random() * (95 - 75 + 1)) + 75; 
-            const spO2 = Math.floor(Math.random() * (100 - 96 + 1)) + 96;
-            vitalsDisplay.innerText = `[I2C Stream] BPM: ${bpm} | SpO2: ${spO2}%`;
-        }, 2000);
-    }
-
     // --- PREDICTIVE WAIT TIME ALGORITHM ---
     function calculateETA(patientId) {
         const queue = getQueue();
         const currentlyServing = queue.find(p => p.status === 'serving');
         const waiting = queue.filter(p => p.status === 'waiting');
-        
         let time = 0;
-        // Add time for the person currently in the room
-        if (currentlyServing) {
-            time += (currentlyServing.priority === 'Critical' ? 15 : currentlyServing.priority === 'Urgent' ? 10 : 5);
-        }
-        // Add time for everyone ahead of this patient in the queue
+        if (currentlyServing) time += (currentlyServing.priority === 'Critical' ? 15 : currentlyServing.priority === 'Urgent' ? 10 : 5);
         for (let p of waiting) {
             if (p.id === patientId) break;
             time += (p.priority === 'Critical' ? 15 : p.priority === 'Urgent' ? 10 : 5);
@@ -361,7 +220,7 @@
     function getQueue() { return JSON.parse(localStorage.getItem('hospitalQueue')) || []; }
     function saveQueue(queue) { localStorage.setItem('hospitalQueue', JSON.stringify(queue)); renderUI(); }
 
-    // --- AI VOICE DICTATION (SPEECH-TO-TEXT) ---
+    // --- AI VOICE DICTATION ---
     function startDictation() {
         const micBtn = document.getElementById('micBtn');
         const symptomInput = document.getElementById('patientSymptoms');
@@ -371,28 +230,12 @@
             recognition.continuous = false;
             recognition.interimResults = false;
             recognition.lang = "en-US";
-
-            recognition.onstart = function() {
-                micBtn.innerText = "🔴"; 
-                micBtn.style.boxShadow = "0 0 20px red";
-                symptomInput.placeholder = "Listening to patient...";
-            };
-
-            recognition.onresult = function(event) {
-                symptomInput.value = event.results[0][0].transcript;
-                resetMicBtn(micBtn, symptomInput);
-            };
-
-            recognition.onerror = function() {
-                alert("Microphone error. Please type.");
-                resetMicBtn(micBtn, symptomInput);
-            };
-
+            recognition.onstart = function() { micBtn.innerText = "🔴"; micBtn.style.boxShadow = "0 0 20px red"; symptomInput.placeholder = "Listening..."; };
+            recognition.onresult = function(event) { symptomInput.value = event.results[0][0].transcript; resetMicBtn(micBtn, symptomInput); };
+            recognition.onerror = function() { alert("Microphone error. Please type."); resetMicBtn(micBtn, symptomInput); };
             recognition.onend = function() { resetMicBtn(micBtn, symptomInput); };
             recognition.start();
-        } else {
-            alert("Voice recognition not supported. Try Chrome.");
-        }
+        } else { alert("Voice recognition not supported. Try Chrome."); }
     }
     function resetMicBtn(btn, input) {
         btn.innerText = "🎤";
@@ -400,13 +243,11 @@
         if (!input.value) input.placeholder = "Describe symptoms or use mic...";
     }
 
-    // --- AI TEXT-TO-SPEECH (TTS) ---
+    // --- AI TEXT-TO-SPEECH ---
     function announcePatient(name, tokenNum) {
         if ('speechSynthesis' in window) {
             const announcement = new SpeechSynthesisUtterance();
             announcement.text = `Attention please. Token number ${tokenNum}, ${name}. Please proceed to the doctor's cabin.`;
-            announcement.rate = 0.9; 
-            announcement.pitch = 1.1; 
             window.speechSynthesis.speak(announcement);
         }
     }
@@ -419,17 +260,64 @@
                 headers: { "Authorization": `Bearer ${OPENROUTER_API_KEY}`, "Content-Type": "application/json" },
                 body: JSON.stringify({
                     model: "meta-llama/llama-3-8b-instruct:free", 
-                    messages: [{
-                        role: "system",
-                        content: "You are a hospital triage AI. Read the symptoms and reply with EXACTLY ONE WORD: 'Critical', 'Urgent', or 'Routine'."
-                    }, { role: "user", content: symptoms }]
+                    messages: [{ role: "system", content: "You are a triage AI. Reply with EXACTLY ONE WORD: 'Critical', 'Urgent', or 'Routine'." }, { role: "user", content: symptoms }]
                 })
             });
             const data = await response.json();
             let priority = data.choices[0].message.content.trim().replace(/[^a-zA-Z]/g, "");
             return ["Critical", "Urgent", "Routine"].includes(priority) ? priority : "Routine";
+        } catch (error) { return "Routine"; }
+    }
+
+    async function requestAIDiagnosis(symptoms) {
+        const outputDiv = document.getElementById('aiDiagnosisOutput');
+        outputDiv.innerHTML = '<span style="color: var(--primary);">🤖 AI Neural Net is analyzing medical database...</span>';
+        outputDiv.style.display = 'block';
+        try {
+            const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                method: "POST",
+                headers: { "Authorization": `Bearer ${OPENROUTER_API_KEY}`, "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    model: "meta-llama/llama-3-8b-instruct:free", 
+                    messages: [{ role: "system", content: "You are a doctor's assistant. Provide 3 possible differential diagnoses in a concise list. No greetings." }, { role: "user", content: symptoms }]
+                })
+            });
+            const data = await response.json();
+            outputDiv.innerHTML = `<strong>AI Suggested Diagnoses:</strong><br><span style="color: var(--text-muted);">${data.choices[0].message.content.trim().replace(/\n/g, '<br>')}</span>`;
+        } catch (error) { outputDiv.innerHTML = '<span style="color: #ef4444;">Connection failed.</span>'; }
+    }
+
+    // --- NEW: AI SMART DISCHARGE SUMMARY REPORT ---
+    async function generateSmartReport(name, symptoms, priority) {
+        const outputDiv = document.getElementById('aiReportOutput');
+        outputDiv.innerHTML = '<span style="color: var(--primary);">Generating official AI Discharge Summary... please wait.</span>';
+        outputDiv.style.display = 'block';
+        
+        try {
+            const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                method: "POST",
+                headers: { "Authorization": `Bearer ${OPENROUTER_API_KEY}`, "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    model: "meta-llama/llama-3-8b-instruct:free", 
+                    messages: [{
+                        role: "system",
+                        content: "You are an automated hospital AI system. Write a short, professional 'Medical Discharge Summary' for a patient. Include sections for: Clinical Summary, AI Assessment, and Recommended Care/Next Steps. Format using basic HTML tags like <strong>, <ul>, <li>, and <br>. Keep it under 150 words."
+                    }, { role: "user", content: `Patient Name: ${name}. Symptoms: ${symptoms}. Triage Priority: ${priority}.` }]
+                })
+            });
+            const data = await response.json();
+            const report = data.choices[0].message.content.trim();
+            
+            outputDiv.innerHTML = `
+                <div style="background: rgba(255,255,255,0.05); border: 1px solid var(--primary); padding: 20px; border-radius: 8px;">
+                    <h3 style="margin-top:0; color: var(--primary); text-align: center; text-transform: uppercase; letter-spacing: 2px;">🏥 Official Medical Report</h3>
+                    <hr style="border-color: var(--glass-border); margin-bottom: 15px;">
+                    <div style="font-size: 0.95em; line-height: 1.6; color: var(--text-main);">${report}</div>
+                    <button class="action-btn" style="margin-top: 20px; background: var(--primary); color: white; border: none;" onclick="window.print()">🖨️ Print / Save as PDF</button>
+                </div>
+            `;
         } catch (error) {
-            console.error("AI Triage Failed:", error); return "Routine"; 
+            outputDiv.innerHTML = '<span style="color: #ef4444;">Failed to generate AI report.</span>';
         }
     }
 
@@ -442,7 +330,6 @@
 
         const name = nameInput.value.trim();
         const symptoms = symptomInput.value.trim();
-
         if (!name || !symptoms) { alert("Please enter both name and symptoms."); return; }
 
         btn.disabled = true;
@@ -465,7 +352,6 @@
         });
 
         saveQueue(queue);
-        
         nameInput.value = ''; symptomInput.value = ''; 
         btn.disabled = false;
         btn.innerText = "Initiate AI Scan & Generate Token";
@@ -479,34 +365,25 @@
     function callNextPatient() {
         const queue = getQueue();
         const currentlyServing = queue.find(p => p.status === 'serving');
-        
         if (currentlyServing) { alert(`Finish Token #${currentlyServing.id} first.`); return; }
 
         const nextPatient = queue.find(p => p.status === 'waiting');
         if (nextPatient) { 
             nextPatient.status = 'serving'; 
             saveQueue(queue); 
-            // Trigger Text-to-Speech
             announcePatient(nextPatient.name, nextPatient.id);
-        } else { 
-            alert("Queue is empty."); 
-        }
+        } else { alert("Queue is empty."); }
     }
 
     function finishCurrentPatient() {
         const queue = getQueue();
         const currentlyServing = queue.find(p => p.status === 'serving');
-        if (currentlyServing) { 
-            currentlyServing.status = 'completed'; 
-            saveQueue(queue); 
-            clearInterval(sensorInterval); // Stop IoT sim
-        }
+        if (currentlyServing) { currentlyServing.status = 'completed'; saveQueue(queue); }
     }
 
     function resetQueue() {
         if(confirm("Initiate system wipe? All queue data will be lost.")) {
             localStorage.removeItem('hospitalQueue');
-            clearInterval(sensorInterval);
             renderUI();
         }
     }
@@ -562,11 +439,20 @@
                 <strong>ID/Name:</strong> Token #${currentlyServing.id} - ${currentlyServing.name}<br><br>
                 <strong>AI Classification:</strong> <span class="badge badge-${currentlyServing.priority}">${currentlyServing.priority}</span><br><br>
                 <strong>Symptom Log:</strong> <span style="color: var(--text-muted);">"${currentlyServing.symptoms}"</span><br><br>
-                <hr style="border-color: var(--glass-border);">
-                <strong>Live Hardware Integration (Arduino UNO):</strong><br>
-                <div class="sensor-data" id="pulseRate">[I2C Stream] Initializing sensors...</div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button class="action-btn" style="--primary: #a855f7; --primary-glow: rgba(168,85,247,0.5); padding: 8px 15px; font-size: 14px;" onclick="requestAIDiagnosis('${currentlyServing.symptoms}')">
+                        🧠 AI Diagnosis
+                    </button>
+                    <button class="action-btn" style="--primary: #0ea5e9; --primary-glow: rgba(14,165,233,0.5); padding: 8px 15px; font-size: 14px;" onclick="generateSmartReport('${currentlyServing.name}', '${currentlyServing.symptoms}', '${currentlyServing.priority}')">
+                        📜 Generate Report
+                    </button>
+                </div>
+                
+                <div id="aiDiagnosisOutput" style="margin-top: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 5px; border-left: 3px solid #a855f7; font-size: 0.9em; display: none;"></div>
+                
+                <div id="aiReportOutput" style="margin-top: 15px; display: none;"></div>
             `;
-            simulatePulseSensor();
         } else {
             doctorStatus.innerHTML = `<strong style="color: var(--text-muted);">System Status: Idle / Ready for next intake.</strong>`;
         }
