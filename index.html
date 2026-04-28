@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Queue Management System</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f3f4f6;
+            --card: #ffffff;
+            --text: #1f2937;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        /* Navigation Tabs */
+        .nav {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+        .nav button {
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            color: gray;
+            cursor: pointer;
+            padding: 10px;
+        }
+        .nav button.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        /* Views */
+        .view { display: none; }
+        .view.active { display: block; }
+        
+        /* Elements */
+        input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button.action-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button.action-btn:hover { background-color: #1d4ed8; }
+        
+        /* Queue Display */
+        .queue-box {
+            border: 1px solid #e5e7eb;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .current-serving {
+            background-color: #dcfce7;
+            border-color: #22c55e;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 style="text-align: center;">🏥 Care Queue System</h1>
+    
+    <div class="nav">
+        <button id="tab-reception" class="active" onclick="switchTab('reception')">Reception (Add Patient)</button>
+        <button id="tab-display" onclick="switchTab('display')">Queue Display</button>
+        <button id="tab-doctor" onclick="switchTab('doctor')">Doctor Dashboard</button>
+    </div>
+
+    <div id="view-reception" class="view active">
+        <h2>Register New Patient</h2>
+        <input type="text" id="patientName" placeholder="Enter Patient Name..." required>
+        <button class="action-btn" onclick="addPatient()">Generate Token</button>
+        <p id="receptionMessage" style="color: green; font-weight: bold; mt-10"></p>
+    </div>
+
+    <div id="view-display" class="view">
+        <h2>Live Queue Status</h2>
+        <div id="servingNowContainer">
+            </div>
+        <hr>
+        <h3>Waiting List</h3>
+        <div id="waitingListContainer">
+             </div>
+    </div>
+
+    <div id="view-doctor" class="view">
+        <h2>Doctor Control Panel</h2>
+        <button class="action-btn" style="background-color: #22c55e;" onclick="callNextPatient()">Call Next Patient</button>
+        <button class="action-btn" style="background-color: #ef4444;" onclick="finishCurrentPatient()">Finish Serving Current</button>
+        <button class="action-btn" style="background-color: gray; float: right;" onclick="resetQueue()">Reset All Data</button>
+        <div id="doctorCurrentPatient" style="margin-top: 20px; font-size: 1.2em;">
+            </div>
+    </div>
+</div>
+
+<script>
+    // --- DATABASE (Local Storage Simulation) ---
+    // Structure: Array of objects { id: number, name: string, status: 'waiting' | 'serving' | 'completed' }
+    
+    function getQueue() {
+        const data = localStorage.getItem('hospitalQueue');
+        return data ? JSON.parse(data) : [];
+    }
+
+    function saveQueue(queue) {
+        localStorage.setItem('hospitalQueue', JSON.stringify(queue));
+        renderUI(); // Re-render UI whenever data changes
+    }
+
+    // --- LOGIC FUNCTIONS ---
+    
+    function addPatient() {
+        const nameInput = document.getElementById('patientName');
+        const name = nameInput.value.trim();
+        if (!name) {
+            alert("Please enter a patient name.");
+            return;
+        }
+
+        const queue = getQueue();
+        const nextId = queue.length > 0 ? queue[queue.length - 1].id + 1 : 1;
+        
+        queue.push({
+            id: nextId,
+            name: name,
+            status: 'waiting'
+        });
+
+        saveQueue(queue);
+        nameInput.value = ''; // Clear input
+        document.getElementById('receptionMessage').innerText = `Patient ${name} added! Token: #${nextId}`;
+        setTimeout(() => document.getElementById('receptionMessage').innerText = '', 3000);
+    }
+
+    function callNextPatient() {
+        const queue = getQueue();
+        
+        // Ensure no one is currently being served
+        const currentlyServing = queue.find(p => p.status === 'serving');
+        if (currentlyServing) {
+            alert(`Please finish with Token #${currentlyServing.id} before calling the next patient.`);
+            return;
+        }
+
+        // Find the next waiting patient (FIFO - First In, First Out)
+        const nextPatient = queue.find(p => p.status === 'waiting');
+        if (nextPatient) {
+            nextPatient.status = 'serving';
+            saveQueue(queue);
+        } else {
+            alert("No patients are waiting in the queue.");
+        }
+    }
+
+    function finishCurrentPatient() {
+        const queue = getQueue();
+        const currentlyServing = queue.find(p => p.status === 'serving');
+        
+        if (currentlyServing) {
+            currentlyServing.status = 'completed';
+            saveQueue(queue);
+        } else {
+            alert("No patient is currently being served.");
+        }
+    }
+
+    function resetQueue() {
+        if(confirm("Are you sure you want to delete all queue data? This is for demo purposes.")) {
+            localStorage.removeItem('hospitalQueue');
+            renderUI();
+        }
+    }
+
+    // --- UI/DOM FUNCTIONS ---
+
+    function switchTab(tabName) {
+        // Hide all views
+        document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+        // Deactivate all tabs
+        document.querySelectorAll('.nav button').forEach(btn => btn.classList.remove('active'));
+        
+        // Show selected view and activate tab
+        document.getElementById(`view-${tabName}`).classList.add('active');
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+        
+        renderUI(); // Refresh data when switching tabs
+    }
+
+    function renderUI() {
+        const queue = getQueue();
+        
+        // 1. Render Display View
+        const servingNowContainer = document.getElementById('servingNowContainer');
+        const waitingListContainer = document.getElementById('waitingListContainer');
+        
+        const currentlyServing = queue.find(p => p.status === 'serving');
+        const waitingPatients = queue.filter(p => p.status === 'waiting');
+
+        if (currentlyServing) {
+            servingNowContainer.innerHTML = `<div class="queue-box current-serving"><span>Now Serving: ${currentlyServing.name}</span> <span>Token #${currentlyServing.id}</span></div>`;
+        } else {
+            servingNowContainer.innerHTML = `<p>No patient is currently being served.</p>`;
+        }
+
+        waitingListContainer.innerHTML = '';
+        if (waitingPatients.length > 0) {
+            waitingPatients.forEach(p => {
+                waitingListContainer.innerHTML += `<div class="queue-box"><span>${p.name}</span> <span>Token #${p.id}</span></div>`;
+            });
+        } else {
+            waitingListContainer.innerHTML = '<p>No patients in the waiting queue.</p>';
+        }
+
+        // 2. Render Doctor View
+        const doctorStatus = document.getElementById('doctorCurrentPatient');
+        if (currentlyServing) {
+            doctorStatus.innerHTML = `<strong>Current Patient:</strong> ${currentlyServing.name} (Token #${currentlyServing.id})`;
+        } else {
+            doctorStatus.innerHTML = `<strong>Status:</strong> Available / Idle`;
+        }
+    }
+
+    // Initialize UI on page load
+    renderUI();
+</script>
+
+</body>
+</html>
